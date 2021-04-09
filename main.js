@@ -30,12 +30,29 @@ app.use(
     })
 );
 
-router.use(express.json());
 router.use(layouts);
 router.use(express.static("public"));
 router.use(methodOverride("_method", {
     methods: ["POST", "GET", ]
 }));
+
+router.use(express.json());
+
+router.user(cookieParser("my_passcode"));
+router.use(expressSession({
+    secret: "my_passcode",
+    cookie: {
+        maxAge: 360000
+    },
+    resave: false,
+    saveUninitialized: false
+}));
+
+router.use(passport.initialize());
+router.use(passport.session());
+passport.use(User.createStrategy);
+passport.serializeUser(User.serializeUser);
+passport.deserializeUser(User.deserializeUser);
 
 router.get("/", homeController.index);
 

@@ -3,6 +3,9 @@
 const User = require("../models/user");
 
 module.exports = {
+    login: (req, res) => {
+        res.render("users/login");
+    },
     index: (req, res, next) => {
         User.find()
             .then(users => {
