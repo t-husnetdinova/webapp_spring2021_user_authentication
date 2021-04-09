@@ -65,7 +65,7 @@ module.exports = {
 
         req.getValidationResults().then((error) => {
             if(!error.isEmpty()) {
-                let messages = error.array(),map(e => e.msg);
+                let messages = error.array().map(e => e.msg);
                 req.flash("error", messages.join(" and "));
                 req.skip = true;
                 res.locals.redirect = "/users/new";
