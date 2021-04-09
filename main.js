@@ -8,8 +8,13 @@ const express = require("express"),
     subscribersController = require("./controllers/subscribersController"),
     usersController = require("./controllers/usersController"),
     coursesController = require("./controllers/coursesController"),
-    methodOverride = require("method-override");
-
+    methodOverride = require("method-override"),
+    passport = require("passport"),
+    cookieParser = require("cookie-parser"),
+    expressSession = require("express-session"),
+    expressValidator = require("express-validator"),
+    connectFlash = require("connect-flash"),
+    User = require("./models/user");
 
 mongoose.connect(
     "mongodb://localhost:27017/confetti_cuisine", 
@@ -47,6 +52,9 @@ router.delete("/subscribers/:id/delete", subscribersController.delete, subscribe
 router.get("/users", usersController.index, usersController.indexView);
 router.get("/users/new", usersController.new);
 router.post("/users/create", usersController.create, usersController.redirectView);
+router.get("/users/login", usersController.login);
+router.post("/users/login", usersController.authenticate);
+router.get("/users/logout", usersController.logout, usersController.redirectView);
 router.get("/users/:id", usersController.show, usersController.showView);
 router.get("/users/:id/edit", usersController.edit);
 router.put("/users/:id/update", usersController.update, usersController.redirectView);
@@ -60,19 +68,6 @@ router.get("/courses/:id", coursesController.show, coursesController.showView);
 router.get("/courses/:id/edit", coursesController.edit);
 router.put("/courses/:id/update", coursesController.update, coursesController.redirectView);
 router.delete("/courses/:id/delete", coursesController.delete, coursesController.redirectView);
-
-// app.get("/", homeController.showIndex);
-// app.get("/", (req, res) => {
-//     res.render("index");
-// });
-
-// routes - the old way of doing it  
-// app.get("/courses", homeController.showCourses);
-// app.get("/contact", homeController.showSignUp);
-// app.post("/contact", homeController.postedSignUpForm);
-// app.get("/subscribers", subscribersController.getAllSubscribers);
-// app.get("/contact", subscribersController.getSubscriptionPage);
-// app.post("/subscribe", subscribersController.saveSubscriber);
 
 // error handling
 router.use(errorController.pageNotFoundError);
