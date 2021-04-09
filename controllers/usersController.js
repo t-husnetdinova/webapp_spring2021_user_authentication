@@ -1,6 +1,15 @@
 "use strict";
 
-const User = require("../models/user");
+const User = require("../models/user"),
+    getUserParams = body => {
+        return {
+            firstName: body.firstName,
+            lastName: body.lastName,
+            email: body.email,
+            passwork: body.password,
+            zipCode: body.zipCode
+        }
+    }
 
 module.exports = {
     login: (req, res) => {
@@ -24,23 +33,48 @@ module.exports = {
         res.render("users/new");
     },
     create: (req, res, next) => {
-        let newUser = new User({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            zipCode: req.body.zipCode,
-            password: req.body.password
-        });
-        User.create(newUser)
-            .then(user => {
-                res.locals.user = user;
+        if(req.skip) return next();
+
+        let userParams = getUserParams(req.body);
+        let newUser = new User(userParams);
+
+        User.register(newUser, req.body.password, (error, user) => {
+            if(user) {
+                req.flash("success", "User account successfully created!");
                 res.locals.redirect = "/users";
                 next();
-            })
-            .catch(error => {
-                console.log(`Error saving user: ${error.message}`);
-                next(error);
-            })
+            }
+            else {
+                req.flash("error", `Failed to create user account: ${error.message}`);
+                res.locals.redirect = "/users/new";
+                next();
+            }
+        });
+    },
+    validate: (req, res, next) => {
+        req.sanitizeBody("email").normalizeEmail({
+            all_lowercase: true
+        }).trim();
+
+        req.check("email", "Email is not valid!").isEmail();
+        req.check("zipCode", "Zip Code is not valid!").notEmpty().isInt().isLength({
+            min: 5,
+            max: 5
+        });
+        req.check("password", "Password cannot be empty!").notEmpty();
+
+        req.getValidationResults().then((error) => {
+            if(!error.isEmpty()) {
+                let messages = error.array(),map(e => e.msg);
+                req.flash("error", messages.join(" and "));
+                req.skip = true;
+                res.locals.redirect = "/users/new";
+                next();
+            }
+            else {
+                next();
+            }
+        });
     },
     redirectView: (req, res, next) => {
         let redirectPath = res.locals.redirect;
