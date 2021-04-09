@@ -1,5 +1,3 @@
-"use strict";
-
 const passportLocalMongoose = require("passport-local-mongoose");
 
 const mongoose = require("mongoose"),
