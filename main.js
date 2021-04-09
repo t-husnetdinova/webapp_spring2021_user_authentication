@@ -54,6 +54,10 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser);
 passport.deserializeUser(User.deserializeUser);
 
+router.use((req, res, next) => {
+    res.locals.flashMessages = req.flash();
+});
+
 router.get("/", homeController.index);
 
 // subscriber routes

@@ -28,11 +28,6 @@
                         Courses
                     </span>
                 </a>
-                <!-- <a href="/users/new">
-                    <span class="button">
-                        Contact
-                    </span>
-                </a> -->
                 <a href="/users">
                     <span class="button">
                         Users
@@ -45,6 +40,21 @@
                 </a>
             </div>
         </div>
+
+        <div class="flashes">
+            <% if(flashMessages) { %>
+                <% if(flashMessages.success) { %>
+                    <div class="flash-success">
+                        <%= flashMessages.success %>
+                    </div>
+                <% } else if(flashMessages.error) { %>
+                    <div class="flash-error">
+                        <%= flashMessages.error %>
+                    </div>
+                <% } %>
+            <% } %>
+        </div>
+        
         <%- body %>
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
