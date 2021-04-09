@@ -22,6 +22,8 @@ mongoose.connect(
 { useUnifiedTopology: true }
 );
 
+mongoose.set("useCreateIndex", true);
+
 app.set("view engine", "ejs");
 app.set("port", process.env.PORT || 3000);
 app.use(
@@ -30,12 +32,13 @@ app.use(
     })
 );
 
-router.use(layouts);
-router.use(express.static("public"));
 router.use(methodOverride("_method", {
     methods: ["POST", "GET", ]
 }));
 
+router.use(layouts);
+router.use(express.static("public"));
+router.use(expressValidator());
 router.use(express.json());
 
 router.user(cookieParser("my_passcode"));
@@ -48,6 +51,8 @@ router.use(expressSession({
     saveUninitialized: false
 }));
 
+router.use(connectFlash());
+
 router.use(passport.initialize());
 router.use(passport.session());
 passport.use(User.createStrategy());
@@ -56,6 +61,8 @@ passport.deserializeUser(User.deserializeUser);
 
 router.use((req, res, next) => {
     res.locals.flashMessages = req.flash();
+    res.locals.loggedIn = req.isUnauthenticated();
+    res.locals.currentUser = req.user;
 });
 
 router.get("/", homeController.index);
@@ -78,7 +85,7 @@ router.post("/users/login", usersController.authenticate);
 router.get("/users/logout", usersController.logout, usersController.redirectView);
 router.get("/users/:id", usersController.show, usersController.showView);
 router.get("/users/:id/edit", usersController.edit);
-router.put("/users/:id/update", usersController.update, usersController.redirectView);
+router.put("/users/:id/update", usersController.validate, usersController.update, usersController.redirectView);
 router.delete("/users/:id/delete", usersController.delete, usersController.redirectView);
 
 // course routes

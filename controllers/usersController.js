@@ -1,5 +1,7 @@
 "use strict";
 
+const passport = require("passport");
+
 const User = require("../models/user"),
     getUserParams = body => {
         return {
@@ -76,6 +78,18 @@ module.exports = {
             }
         });
     },
+    authenticate: passport.authenticate("local", {
+        failureRedirect: "/users/login",
+        failureFlash: "Login failed! Check your email or password!",
+        successRedirect: "/",
+        successFlash: "Logged in!"
+    }),
+    logout: (req, res, next) => {
+        res.logout();
+        req.flash("success", "Successfully logged out!");
+        res. locals.redirect = "/";
+        next();
+    },
     redirectView: (req, res, next) => {
         let redirectPath = res.locals.redirect;
         if (redirectPath != undefined) res.redirect(redirectPath);
@@ -108,6 +122,8 @@ module.exports = {
             })
     },
     update: (req, res, next) => {
+        if(req.skip) return next();
+
         let userId = req.params.id;
         // let updatedUser = new User ({
         //     firstName: req.body.firstName,

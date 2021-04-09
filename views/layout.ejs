@@ -41,6 +41,20 @@
             </div>
         </div>
 
+        <div class="login">
+            <% if(loggedIn) { %>
+                <p>
+                    Logged in as 
+                    <a href=" <%= `/users/${currentUser._id}` %>">
+                        <%= currentUser.firstName %>
+                    </a>
+                </p>
+                <a href="/users/logout">Log Out</a>
+            <% } else { %>
+            <a href="/users/login">Log In</a>
+            <% } %>  
+        </div>
+
         <div class="flashes">
             <% if(flashMessages) { %>
                 <% if(flashMessages.success) { %>
@@ -54,7 +68,7 @@
                 <% } %>
             <% } %>
         </div>
-        
+
         <%- body %>
 
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
