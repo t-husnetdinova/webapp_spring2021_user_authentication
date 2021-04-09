@@ -41,7 +41,7 @@ router.use(express.static("public"));
 router.use(expressValidator());
 router.use(express.json());
 
-router.user(cookieParser("my_passcode"));
+router.use(cookieParser("my_passcode"));
 router.use(expressSession({
     secret: "my_passcode",
     cookie: {
