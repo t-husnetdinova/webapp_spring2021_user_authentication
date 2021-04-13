@@ -65,7 +65,7 @@ module.exports = {
         });
         req.check("password", "Password cannot be empty!").notEmpty();
 
-        req.getValidationResults().then((error) => {
+        req.getValidationResult().then((error) => {
             if(!error.isEmpty()) {
                 let messages = error.array().map(e => e.msg);
                 req.flash("error", messages.join(" and "));
@@ -85,7 +85,7 @@ module.exports = {
         successFlash: "Logged in!"
     }),
     logout: (req, res, next) => {
-        res.logout();
+        req.logout();
         req.flash("success", "Successfully logged out!");
         res. locals.redirect = "/";
         next();
